@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>在线游戏管理</title>
+    <title>在线工具导航</title>
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg">
     <style>
         * {
             margin: 0;
@@ -118,14 +119,14 @@
             border-color: var(--primary);
         }
         
-        .games-grid {
+        .tools-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 1.5rem;
             margin-bottom: 3rem;
         }
         
-        .game-card {
+        .tool-card {
             border-radius: var(--radius-lg);
             box-shadow: var(--shadow);
             overflow: hidden;
@@ -133,12 +134,12 @@
             min-height: 150px;
         }
         
-        .game-card:hover {
+        .tool-card:hover {
             transform: translateY(-5px);
             box-shadow: var(--shadow-lg);
         }
         
-        .game-card a {
+        .tool-card a {
             display: block;
             text-decoration: none;
             color: var(--gray-900);
@@ -146,25 +147,25 @@
             height: 100%;
         }
         
-        .game-content {
+        .tool-content {
             height: 100%;
             display: flex;
             flex-direction: column;
         }
         
-        .game-title {
+        .tool-title {
             font-size: 1.125rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
         }
         
-        .game-description {
+        .tool-description {
             font-size: 0.875rem;
             color: var(--gray-600);
             margin-bottom: 1rem;
         }
         
-        .game-category {
+        .tool-category {
             display: inline-block;
             padding: 0.25rem 0.75rem;
             background-color: rgba(255, 255, 255, 0.8);
@@ -173,6 +174,8 @@
             color: var(--gray-700);
             max-width: fit-content;
         }
+        
+
         
         footer {
             text-align: center;
@@ -212,12 +215,12 @@
                 font-size: 2rem;
             }
             
-            .games-grid {
+            .tools-grid {
                 grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
                 gap: 1rem;
             }
             
-            .game-card a {
+            .tool-card a {
                 padding: 1.25rem;
             }
         }
@@ -231,7 +234,7 @@
                 font-size: 1.75rem;
             }
             
-            .games-grid {
+            .tools-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -240,47 +243,110 @@
 <body>
     <div class="container">
         <header>
-            <h1>在线游戏管理</h1>
-            <p class="subtitle">探索我们的游戏集合，享受休闲娱乐时光</p>
+            <h1>在线工具导航</h1>
+            <p class="subtitle">探索我们的工具集，提高您的工作效率</p>
         </header>
         
         <div class="search-container">
-            <input type="text" id="search-input" placeholder="搜索游戏...">
+            <input type="text" id="search-input" placeholder="搜索工具...">
             <span class="search-icon">🔍</span>
         </div>
         
         <div class="filter-container">
             <button class="filter-btn active" data-category="all">全部</button>
-            <button class="filter-btn" data-category="board">棋盘游戏</button>
-            <button class="filter-btn" data-category="puzzle">益智游戏</button>
-            <button class="filter-btn" data-category="action">动作游戏</button>
+            <button class="filter-btn" data-category="editor">编辑器</button>
+            <button class="filter-btn" data-category="converter">转换器</button>
+            <button class="filter-btn" data-category="utility">实用工具</button>
         </div>
         
-        <div class="games-grid" id="games-grid"></div>
+        <div class="tools-grid" id="tools-grid"></div>
     </div>
     
     <footer>
-        <p>在线游戏管理系统</p>
+        <p>部署于 Cloudflare Pages</p>
     </footer>
     
     <script>
-        // 游戏数据
-        const games = [
+        // 工具数据
+        const tools = [
             {
-                id: 'gomoku',
-                name: '五子棋',
-                description: '经典的五子棋游戏，支持人机对战和人人对战',
-                category: 'board',
-                icon: '♟️',
-                path: './Gomoku/',
-                iconClass: 'gomoku-icon'
+                id: 'mermaid',
+                name: 'Mermaid 在线编辑器',
+                description: '使用 Mermaid 语法创建流程图、时序图等图表',
+                category: 'editor',
+                icon: '📊',
+                path: './mermaid/',
+                iconClass: 'mermaid-icon'
+            },
+            {
+                id: 'svg',
+                name: 'SVG 在线编辑器',
+                description: '创建和编辑 SVG 矢量图形',
+                category: 'editor',
+                icon: '🎨',
+                path: './svg/',
+                iconClass: 'svg-icon'
+            },
+            {
+                id: 'picmerge',
+                name: '在线图片合并器',
+                description: '将多张图片合并为一张',
+                category: 'utility',
+                icon: '🖼️',
+                path: './picmerge/',
+                iconClass: 'picmerge-icon'
+            },
+            {
+                id: 'appguide',
+                name: '应用创建向导',
+                description: '引导您创建应用程序',
+                category: 'utility',
+                icon: '🚀',
+                path: './appguide/',
+                iconClass: 'appguide-icon'
+            },
+            {
+                id: 'img2ico',
+                name: '图片转ICO工具',
+                description: '将图片转换为 ICO 图标格式',
+                category: 'converter',
+                icon: '🖼️➡️🏷️',
+                path: './img2ico/',
+                iconClass: 'img2ico-icon'
+            },
+            {
+                id: 'exmusic',
+                name: '音乐格式转换',
+                description: '转换音频文件格式',
+                category: 'converter',
+                icon: '🎵🔄',
+                path: './exmusic/',
+                iconClass: 'exmusic-icon'
+            },
+            {
+                id: 'lrc2srt',
+                name: '歌词转字幕工具',
+                description: '将 LRC 歌词转换为 SRT 字幕',
+                category: 'converter',
+                icon: '📝➡️📺',
+                path: './lrc2srt/',
+                iconClass: 'lrc2srt-icon'
+            },
+            {
+                id: 'xcode',
+                name: '二维码/条形码生成器',
+                description: '将文字转换为二维码或条形码，并保存为PNG格式',
+                category: 'converter',
+                icon: '📱📷',
+                path: './xcode/',
+                iconClass: 'xcode-icon'
             }
         ];
         
         // DOM 元素
         const searchInput = document.getElementById('search-input');
         const filterButtons = document.querySelectorAll('.filter-btn');
-        const gamesGrid = document.getElementById('games-grid');
+        const toolsGrid = document.getElementById('tools-grid');
         
         // 生成随机渐变色
         function getRandomGradient() {
@@ -297,28 +363,28 @@
             return gradients[Math.floor(Math.random() * gradients.length)];
         }
         
-        // 渲染游戏卡片
-        function renderGames(gamesToRender) {
-            if (gamesToRender.length === 0) {
-                gamesGrid.innerHTML = `
+        // 渲染工具卡片
+        function renderTools(toolsToRender) {
+            if (toolsToRender.length === 0) {
+                toolsGrid.innerHTML = `
                     <div class="empty-state">
                         <div class="empty-state-icon">🔍</div>
-                        <h3 class="empty-state-title">未找到匹配的游戏</h3>
+                        <h3 class="empty-state-title">未找到匹配的工具</h3>
                         <p class="empty-state-description">请尝试使用其他关键词或筛选条件</p>
                     </div>
                 `;
                 return;
             }
             
-            gamesGrid.innerHTML = gamesToRender.map(game => {
+            toolsGrid.innerHTML = toolsToRender.map(tool => {
                 const randomGradient = getRandomGradient();
                 return `
-                    <div class="game-card" data-category="${game.category}" style="background: ${randomGradient};">
-                        <a href="${game.path}">
-                            <div class="game-content">
-                                <h3 class="game-title">${game.name}</h3>
-                                <p class="game-description">${game.description}</p>
-                                <span class="game-category">${getCategoryName(game.category)}</span>
+                    <div class="tool-card" data-category="${tool.category}" style="background: ${randomGradient};">
+                        <a href="${tool.path}">
+                            <div class="tool-content">
+                                <h3 class="tool-title">${tool.name}</h3>
+                                <p class="tool-description">${tool.description}</p>
+                                <span class="tool-category">${getCategoryName(tool.category)}</span>
                             </div>
                         </a>
                     </div>
@@ -329,30 +395,30 @@
         // 获取分类名称
         function getCategoryName(category) {
             const categoryMap = {
-                'board': '棋盘游戏',
-                'puzzle': '益智游戏',
-                'action': '动作游戏'
+                'editor': '编辑器',
+                'converter': '转换器',
+                'utility': '实用工具'
             };
             return categoryMap[category] || category;
         }
         
-        // 筛选游戏
-        function filterGames() {
+        // 筛选工具
+        function filterTools() {
             const searchTerm = searchInput.value.toLowerCase();
             const activeCategory = document.querySelector('.filter-btn.active').dataset.category;
             
-            const filteredGames = games.filter(game => {
-                const matchesSearch = game.name.toLowerCase().includes(searchTerm) || 
-                                     game.description.toLowerCase().includes(searchTerm);
-                const matchesCategory = activeCategory === 'all' || game.category === activeCategory;
+            const filteredTools = tools.filter(tool => {
+                const matchesSearch = tool.name.toLowerCase().includes(searchTerm) || 
+                                     tool.description.toLowerCase().includes(searchTerm);
+                const matchesCategory = activeCategory === 'all' || tool.category === activeCategory;
                 return matchesSearch && matchesCategory;
             });
             
-            renderGames(filteredGames);
+            renderTools(filteredTools);
         }
         
         // 事件监听
-        searchInput.addEventListener('input', filterGames);
+        searchInput.addEventListener('input', filterTools);
         
         filterButtons.forEach(button => {
             button.addEventListener('click', () => {
@@ -360,13 +426,13 @@
                 filterButtons.forEach(btn => btn.classList.remove('active'));
                 button.classList.add('active');
                 
-                // 筛选游戏
-                filterGames();
+                // 筛选工具
+                filterTools();
             });
         });
         
         // 初始化
-        renderGames(games);
+        renderTools(tools);
     </script>
 </body>
 </html>
