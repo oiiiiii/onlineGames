@@ -167,8 +167,9 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 24px;
+            min-width: 24px;
             height: 24px;
+            padding: 0 4px;
             background: rgba(255, 255, 255, 0.15);
             border: 2px solid #dbb27c;
             border-radius: 6px;
@@ -177,10 +178,11 @@
             color: #f2e3cf;
             margin-right: 4px;
         }
- 
+
         .btn.small .btn-icon {
-            width: 20px;
+            min-width: 20px;
             height: 20px;
+            padding: 0 4px;
             font-size: 14px;
         }
  
@@ -753,8 +755,15 @@
                 <div style="margin-top: 40px;"></div>
                 <div class="group-title">&#128204; 提示</div>
                 <div style="background:#2d2d3a; border-radius: 36px; padding: 22px; font-size: 18px; text-align: center; border:1px solid #b5976b;">
-                    <span class="btn-icon" style="margin-right: 8px;">&#11036;</span> 点击棋盘落子<br><span class="btn-icon" style="margin-right: 8px;">&#129302;</span> 人机自动响应
+                    <p><span class="btn-icon" style="margin-right: 8px;">&#11036;</span> 点击棋盘落子</p>
+                    <p> </p>
+                    <p><span class="btn-icon" style="margin-right: 8px;">&#129302;</span> 人机自动响应</p>
                 </div>
+                <div style="margin-top: 40px;"></div>
+                <div class="group-title">&#128100; 作者链接</div>
+                <a href="https://www.52pojie.cn/thread-2097227-1-1.html" target="_blank" style="text-decoration: none;">
+                    <div class="btn" style="width:100%;"><span class="btn-icon">&#128073;</span> 五子棋专业版2.4 </div>
+                </a>
             `;
  
             // 事件绑定
