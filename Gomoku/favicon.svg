@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.dev/svgjs" width="200" height="200" transform="matrix(1,0,0,1,0,0)"><svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="32" height="32" fill="none"></rect>
+  <!-- 棋盘背景：深色木质感 -->
+  <rect x="2" y="2" width="28" height="28" rx="4" fill="#8B5A2B" stroke="#4B2E1A" stroke-width="1.5"></rect>
+  <!-- 棋盘网格线 (5x5 网格，简约但暗示五子) -->
+  <line x1="6" y1="6" x2="26" y2="6" stroke="#E8D5B5" stroke-width="0.8" stroke-linecap="round"></line>
+  <line x1="6" y1="12" x2="26" y2="12" stroke="#E8D5B5" stroke-width="0.8" stroke-linecap="round"></line>
+  <line x1="6" y1="18" x2="26" y2="18" stroke="#E8D5B5" stroke-width="0.8" stroke-linecap="round"></line>
+  <line x1="6" y1="24" x2="26" y2="24" stroke="#E8D5B5" stroke-width="0.8" stroke-linecap="round"></line>
+  <line x1="6" y1="6" x2="6" y2="26" stroke="#E8D5B5" stroke-width="0.8" stroke-linecap="round"></line>
+  <line x1="12" y1="6" x2="12" y2="26" stroke="#E8D5B5" stroke-width="0.8" stroke-linecap="round"></line>
+  <line x1="18" y1="6" x2="18" y2="26" stroke="#E8D5B5" stroke-width="0.8" stroke-linecap="round"></line>
+  <line x1="24" y1="6" x2="24" y2="26" stroke="#E8D5B5" stroke-width="0.8" stroke-linecap="round"></line>
+  <!-- 棋子：两个黑子(空心圆+深色)和三个白子，排列成胜利连线示意 -->
+  <!-- 黑子 (左下) -->
+  <circle cx="12" cy="18" r="3.2" fill="#2B2B2B" stroke="#FFFFFF" stroke-width="1"></circle>
+  <!-- 黑子 (右上) -->
+  <circle cx="24" cy="6" r="3.2" fill="#2B2B2B" stroke="#FFFFFF" stroke-width="1"></circle>
+  <!-- 白子 (左上) -->
+  <circle cx="6" cy="6" r="3.2" fill="#F5F5F5" stroke="#888888" stroke-width="1"></circle>
+  <!-- 白子 (中) -->
+  <circle cx="16" cy="16" r="3.2" fill="#F5F5F5" stroke="#888888" stroke-width="1"></circle>
+  <!-- 白子 (右下) -->
+  <circle cx="24" cy="24" r="3.2" fill="#F5F5F5" stroke="#888888" stroke-width="1"></circle>
+  <!-- 增加一点点高光效果让棋子更立体 -->
+  <circle cx="14.5" cy="14.5" r="1" fill="white" fill-opacity="0.3"></circle>
+  <circle cx="8" cy="8" r="1" fill="white" fill-opacity="0.4"></circle>
+</svg></svg>
