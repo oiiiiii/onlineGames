@@ -318,6 +318,122 @@
                 font-size: 22px;
             }
         }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .game-layout {
+                gap: 15px;
+            }
+            
+            .control-panel {
+                width: 100%;
+                max-width: 400px;
+                padding: 20px 15px;
+                border-radius: 32px;
+            }
+            
+            .panel-title {
+                font-size: 28px;
+            }
+            
+            .group-title {
+                font-size: 18px;
+            }
+            
+            .btn {
+                font-size: 16px;
+                padding: 12px 6px;
+            }
+            
+            .btn.small {
+                font-size: 14px;
+                padding: 10px 4px;
+            }
+            
+            .status-area {
+                font-size: 24px;
+                padding: 18px 6px;
+            }
+            
+            .modal-content {
+                min-width: 90%;
+                padding: 30px 15px;
+            }
+            
+            .modal-title {
+                font-size: 28px;
+            }
+            
+            .modal-subtitle {
+                font-size: 18px;
+            }
+            
+            .modal-btn {
+                font-size: 18px;
+                padding: 14px 30px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .control-panel {
+                padding: 15px 10px;
+                border-radius: 24px;
+            }
+            
+            .panel-title {
+                font-size: 24px;
+            }
+            
+            .group-title {
+                font-size: 16px;
+            }
+            
+            .btn {
+                font-size: 14px;
+                padding: 10px 4px;
+            }
+            
+            .btn.small {
+                font-size: 12px;
+                padding: 8px 3px;
+            }
+            
+            .status-area {
+                font-size: 20px;
+                padding: 14px 4px;
+            }
+            
+            .button-row {
+                gap: 8px;
+            }
+            
+            canvas#boardCanvas {
+                width: min(90vh, 95vw);
+                height: min(90vh, 95vw);
+                border-radius: 24px;
+            }
+            
+            .modal-content {
+                min-width: 95%;
+                padding: 20px 10px;
+            }
+            
+            .modal-title {
+                font-size: 24px;
+            }
+            
+            .modal-subtitle {
+                font-size: 16px;
+            }
+            
+            .modal-btn {
+                font-size: 16px;
+                padding: 12px 20px;
+            }
+        }
     </style>
 </head>
 <body>
