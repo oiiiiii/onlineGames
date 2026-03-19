@@ -275,6 +275,42 @@
                 icon: '♟️',
                 path: './Gomoku/',
                 iconClass: 'gomoku-icon'
+            },
+            {
+                id: 'xiangqi',
+                name: '中国象棋',
+                description: '经典的中国象棋游戏，支持人机对战和人人对战',
+                category: 'board',
+                icon: '♜',
+                path: './Xiangqi/',
+                iconClass: 'xiangqi-icon'
+            },
+            {
+                id: 'jungle',
+                name: '斗兽棋',
+                description: '暗翻斗兽棋游戏，支持双人对战',
+                category: 'board',
+                icon: '🦁',
+                path: './Jungle/',
+                iconClass: 'jungle-icon'
+            },
+            {
+                id: 'minesweeper',
+                name: '扫雷',
+                description: '经典的扫雷游戏，支持不同难度级别',
+                category: 'puzzle',
+                icon: '💣',
+                path: './Minesweeper/',
+                iconClass: 'minesweeper-icon'
+            },
+            {
+                id: 'go',
+                name: '围棋',
+                description: '经典的围棋游戏，仅支持人人对战，不支持人机对战，不太推荐玩这个网页版的',
+                category: 'board',
+                icon: '⚪',
+                path: './Go/',
+                iconClass: 'go-icon'
             }
         ];
         
@@ -317,7 +353,10 @@
                     <div class="game-card" data-category="${game.category}" style="background: ${randomGradient};">
                         <a href="${game.path}">
                             <div class="game-content">
-                                <h3 class="game-title">${game.name}</h3>
+                                <h3 class="game-title" style="display: flex; align-items: center; gap: 8px;">
+                                    <span style="font-size: 1.5rem;">${game.icon}</span>
+                                    ${game.name}
+                                </h3>
                                 <p class="game-description">${game.description}</p>
                                 <span class="game-category">${getCategoryName(game.category)}</span>
                             </div>
