@@ -474,6 +474,7 @@
     let timerInterval = null;
     let pendingCoord = null;        // 按下的格子坐标
     let isExploreMode = true;       // true: 探索模式, false: 标记模式
+    let adjustedCellSize = CELL_SIZE; // 调整后的单元格大小
 
     // 初始化
     function init() {
@@ -529,11 +530,11 @@
 
     // ----- 绘制函数（精确居中，无偏移）-----
     function fillCellBase(destCtx, col, row, innerColor) {
-        const x = col * CELL_SIZE, y = row * CELL_SIZE;
+        const x = col * adjustedCellSize, y = row * adjustedCellSize;
         destCtx.fillStyle = BORDER_COLOR;
-        destCtx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
+        destCtx.fillRect(x, y, adjustedCellSize, adjustedCellSize);
         destCtx.fillStyle = innerColor;
-        destCtx.fillRect(x + 1, y + 1, CELL_SIZE - 2, CELL_SIZE - 2);
+        destCtx.fillRect(x + 1, y + 1, adjustedCellSize - 2, adjustedCellSize - 2);
     }
 
     function drawCovered(destCtx, col, row) {
@@ -547,9 +548,10 @@
     function drawNumber(destCtx, col, row, num) {
         drawOpenedBase(destCtx, col, row);
         if (num > 0) {
-            const x = col * CELL_SIZE + CELL_SIZE/2;
-            const y = row * CELL_SIZE + CELL_SIZE/2;
-            destCtx.font = 'bold 24px "JetBrains Mono", "Segoe UI", monospace';
+            const x = col * adjustedCellSize + adjustedCellSize/2;
+            const y = row * adjustedCellSize + adjustedCellSize/2;
+            const fontSize = Math.max(16, Math.min(24, adjustedCellSize * 0.8));
+            destCtx.font = `bold ${fontSize}px "JetBrains Mono", "Segoe UI", monospace`;
             const colors = ['#2673b3', '#2b7a4b', '#c44536', '#8a4f9e', '#b3444a', '#3f6a7a', '#4a4a4a', '#2673b3'];
             destCtx.fillStyle = colors[(num-1) % colors.length];
             destCtx.textAlign = 'center';
@@ -564,9 +566,10 @@
 
     function drawFlag(destCtx, col, row) {
         drawCovered(destCtx, col, row);
-        const x = col * CELL_SIZE + CELL_SIZE/2;
-        const y = row * CELL_SIZE + CELL_SIZE/2;
-        destCtx.font = '24px "Segoe UI Emoji", "Apple Color Emoji", sans-serif';
+        const x = col * adjustedCellSize + adjustedCellSize/2;
+        const y = row * adjustedCellSize + adjustedCellSize/2;
+        const fontSize = Math.max(16, Math.min(24, adjustedCellSize * 0.8));
+        destCtx.font = `${fontSize}px "Segoe UI Emoji", "Apple Color Emoji", sans-serif`;
         destCtx.fillStyle = '#dc5f4c';
         destCtx.textAlign = 'center';
         destCtx.textBaseline = 'middle';
@@ -574,14 +577,15 @@
     }
 
     function drawMine(destCtx, col, row, isRed = false) {
-        const x = col * CELL_SIZE, y = row * CELL_SIZE;
+        const x = col * adjustedCellSize, y = row * adjustedCellSize;
         destCtx.fillStyle = BORDER_COLOR;
-        destCtx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
+        destCtx.fillRect(x, y, adjustedCellSize, adjustedCellSize);
         destCtx.fillStyle = isRed ? '#f6cfcf' : OPEN_INNER;
-        destCtx.fillRect(x + 1, y + 1, CELL_SIZE - 2, CELL_SIZE - 2);
-        const cx = x + CELL_SIZE/2;
-        const cy = y + CELL_SIZE/2;
-        destCtx.font = '24px "Segoe UI Emoji", "Apple Color Emoji"';
+        destCtx.fillRect(x + 1, y + 1, adjustedCellSize - 2, adjustedCellSize - 2);
+        const cx = x + adjustedCellSize/2;
+        const cy = y + adjustedCellSize/2;
+        const fontSize = Math.max(16, Math.min(24, adjustedCellSize * 0.8));
+        destCtx.font = `${fontSize}px "Segoe UI Emoji", "Apple Color Emoji"`;
         destCtx.fillStyle = '#2e2e2e';
         destCtx.textAlign = 'center';
         destCtx.textBaseline = 'middle';
@@ -632,15 +636,29 @@
             case '困难': cols = 30; mineCount = 120; break;
             default: cols = 10; mineCount = 10;
         }
-        const width = cols * CELL_SIZE;
+        
+        // 计算屏幕宽度，限制canvas最大宽度
+        const screenWidth = window.innerWidth;
+        const maxCanvasWidth = screenWidth - 80; // 留边距
+        
+        // 计算基础宽度
+        let width = cols * CELL_SIZE;
+        
+        // 如果宽度超过屏幕宽度，调整CELL_SIZE
+        adjustedCellSize = CELL_SIZE;
+        if (width > maxCanvasWidth) {
+            adjustedCellSize = Math.floor(maxCanvasWidth / cols);
+            width = adjustedCellSize * cols;
+        }
+        
         // 高度根据视口自适应，但保证至少有一行，且为CELL_SIZE整数倍
         const maxHeight = window.innerHeight - 200;
-        let height = (width > maxHeight) ? maxHeight - (maxHeight % CELL_SIZE) : width;
-        if (height < CELL_SIZE) height = CELL_SIZE;
-        rows = Math.floor(height / CELL_SIZE);
+        let height = (width > maxHeight) ? maxHeight - (maxHeight % adjustedCellSize) : width;
+        if (height < adjustedCellSize) height = adjustedCellSize;
+        rows = Math.floor(height / adjustedCellSize);
 
         stageWidth = width;
-        stageHeight = rows * CELL_SIZE;
+        stageHeight = rows * adjustedCellSize;
         canvas.width = stageWidth;
         canvas.height = stageHeight;
 
@@ -732,8 +750,8 @@
         const canvasX = e.clientY - shadowRect.top - SHADOW_PADDING;
         const canvasY = e.clientX - shadowRect.left - SHADOW_PADDING;
         if (canvasX < 0 || canvasY < 0 || canvasX >= stageHeight || canvasY >= stageWidth) return null;
-        const row = Math.floor(canvasX / CELL_SIZE);
-        const col = Math.floor(canvasY / CELL_SIZE);
+        const row = Math.floor(canvasX / adjustedCellSize);
+        const col = Math.floor(canvasY / adjustedCellSize);
         if (row < 0 || row >= rows || col < 0 || col >= cols) return null;
         return { row, col };
     }
@@ -750,7 +768,7 @@
         redrawScene();
         ctx.globalAlpha = 0.2;
         ctx.fillStyle = '#2f4f6f';
-        ctx.fillRect(col * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+        ctx.fillRect(col * adjustedCellSize, row * adjustedCellSize, adjustedCellSize, adjustedCellSize);
         ctx.globalAlpha = 1.0;
     }
 
