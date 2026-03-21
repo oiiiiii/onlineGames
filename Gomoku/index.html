@@ -484,6 +484,7 @@
                 this.reviewStep = -1;
                 this.reviewHistory = [];
                 this.isUndoing = false; // 新增：悔棋状态锁
+                this.lastMove = null; // 新增：最后落子位置
             }
  
             reset() {
@@ -496,6 +497,7 @@
                 this.reviewHistory = [];
                 this.aiThinking = false;
                 this.isUndoing = false; // 重置悔棋锁
+                this.lastMove = null; // 重置最后落子位置
                 victoryModalShown = false; 
             }
  
@@ -504,6 +506,7 @@
                 if (this.isUndoing || row<0||row>=BOARD_SIZE||col<0||col>=BOARD_SIZE||this.board[row][col]!==0||this.winner!==0||this.reviewMode) return false;
                 this.board[row][col] = this.turn;
                 this.history.push([row, col, this.turn]);
+                this.lastMove = [row, col]; // 记录最后落子位置
                 if (this.checkWin(row, col)) {
                     this.winner = this.turn;
                     setTimeout(showVictoryModal, 300);
@@ -545,15 +548,16 @@
                         this.turn = player;
                         undoCount++;
                     }
- 
+
                     // 重置游戏状态
                     this.winner = 0;
+                    this.lastMove = null; // 悔棋后清空最后落子位置
                     victoryModalShown = false;
-                     
+                      
                     // 移除胜利弹窗
                     const modal = document.querySelector('.victory-modal');
                     if (modal) modal.remove();
-                     
+                      
                     return undoCount > 0;
                 } finally {
                     // 延迟释放锁，确保状态完全同步
@@ -747,17 +751,29 @@
                 <div class="modal-content">
                     <div class="modal-title ${isPlayerWin ? 'win-text' : 'lose-text'}">${titleText}</div>
                     <div class="modal-subtitle">${subText}</div>
-                    <button class="modal-btn" id="modalRestartBtn">再来一局</button>
+                    <div class="button-row" style="margin-top: 30px;">
+                        <button class="modal-btn" id="modalRestartBtn">再来一局</button>
+                        <button class="modal-btn" id="modalReviewBtn">复盘</button>
+                    </div>
                 </div>
             `;
- 
+
             document.body.appendChild(modal);
- 
+
             document.getElementById('modalRestartBtn').addEventListener('click', () => {
                 game.reset();
                 drawBoard();
                 renderPanels();
                 modal.remove();
+            });
+
+            document.getElementById('modalReviewBtn').addEventListener('click', () => {
+                // 关闭弹窗
+                modal.remove();
+                // 保持棋局状态，禁止落子
+                // 由于游戏已经结束，winner不为0，所以落子会被禁止
+                drawBoard();
+                renderPanels();
             });
         }
  
@@ -816,6 +832,27 @@
                 let text = `&#128203; 复盘 ${stepIdx}/${steps}`;
                 if (steps === 0) text = '&#128203; 复盘模式';
                 ctx.fillText(text, BOARD_LEFT, BOARD_TOP-40);
+            }
+
+            // 绘制最后落子位置的视觉标记
+            if (game.lastMove) {
+                const [row, col] = game.lastMove;
+                const x = BOARD_LEFT + col * CELL_SIZE;
+                const y = BOARD_TOP + row * CELL_SIZE;
+                
+                // 绘制高亮边框
+                ctx.strokeStyle = '#ff4500';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.arc(x, y, PIECE_RADIUS + 4, 0, 2 * Math.PI);
+                ctx.stroke();
+                
+                // 绘制内发光效果
+                ctx.strokeStyle = 'rgba(255, 69, 0, 0.5)';
+                ctx.lineWidth = 8;
+                ctx.beginPath();
+                ctx.arc(x, y, PIECE_RADIUS + 6, 0, 2 * Math.PI);
+                ctx.stroke();
             }
         }
  
