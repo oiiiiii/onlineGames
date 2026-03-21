@@ -804,10 +804,9 @@
                     aiMove();
                 }
                 isAIThinking = false;
-                if (mode === 'humanVsAI' && !gameOver && currentTurn === 'blue') {
-                    triggerAI();
-                }
-                renderBoard();
+                // 移除递归调用，避免无限循环
+                // 不需要在这里再次调用triggerAI()，因为aiMove()执行后会自动处理回合切换
+                // 渲染已经在aiMove()和attemptMove()中完成
             }, 200);
         }
 
