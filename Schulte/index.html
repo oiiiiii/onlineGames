@@ -34,7 +34,7 @@
         }
 
         .control-panel {
-            width: 280px;
+            width: 320px;
             background: rgba(35, 35, 45, 0.85);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
@@ -47,18 +47,9 @@
             flex-direction: column;
             gap: 18px;
             max-height: 90vh;
-            overflow-y: auto;
-            scrollbar-width: thin;
-            scrollbar-color: #c09a6b #3a2a2a;
         }
 
-        .control-panel::-webkit-scrollbar {
-            width: 6px;
-        }
-        .control-panel::-webkit-scrollbar-thumb {
-            background: #c09a6b;
-            border-radius: 20px;
-        }
+
 
         .board-wrapper {
             background: transparent;
@@ -69,6 +60,7 @@
             align-items: center;
             justify-content: center;
             flex: 0 0 auto;
+            width: 500px;
         }
 
         .schulte-board {
@@ -78,6 +70,8 @@
             background: #f0f0f0;
             border-radius: 24px;
             box-shadow: inset 0 0 0 2px #ccc, 0 10px 20px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 460px;
         }
 
         .schulte-cell {
@@ -445,6 +439,7 @@
             
             <div class="button-row">
                 <button class="btn" id="generateBtn">生成新表</button>
+                <button class="btn" id="startBtn">开始</button>
                 <button class="btn" id="resetBtn">重置</button>
             </div>
         </div>
@@ -498,6 +493,7 @@
             const timerDisplay = document.getElementById('timerDisplay');
             const statusText = document.getElementById('statusText');
             const generateBtn = document.getElementById('generateBtn');
+            const startBtn = document.getElementById('startBtn');
             const resetBtn = document.getElementById('resetBtn');
             const difficultyButtons = document.getElementById('difficultyButtons');
             const colorPickerContainer = document.getElementById('colorPickerContainer');
@@ -534,10 +530,10 @@
                 
                 // 重置游戏状态
                 currentNumber = 1;
-                statusText.textContent = '开始按顺序点击数字';
-                
-                // 开始计时
-                startTimer();
+                statusText.textContent = '点击开始按钮开始';
+                stopTimer();
+                timerDisplay.textContent = '00.00';
+                isPlaying = false;
             }
             
             // 处理单元格点击
@@ -547,6 +543,8 @@
                 if (num === currentNumber) {
                     // 正确点击
                     cell.classList.add('correct');
+                    // 应用选择的颜色
+                    cell.style.backgroundColor = currentColor;
                     currentNumber++;
                     
                     const total = currentSize * currentSize;
@@ -568,6 +566,7 @@
                 
                 startTime = Date.now();
                 isPlaying = true;
+                statusText.textContent = '开始按顺序点击数字';
                 
                 timerInterval = setInterval(() => {
                     const elapsed = (Date.now() - startTime) / 1000;
@@ -595,6 +594,7 @@
             
             // 事件绑定
             generateBtn.addEventListener('click', generateSchulteTable);
+            startBtn.addEventListener('click', startTimer);
             resetBtn.addEventListener('click', resetGame);
             
             // 难度选择
