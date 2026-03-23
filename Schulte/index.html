@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>舒尔特表</title>
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: linear-gradient(135deg, #4a6fa5, #1a365d);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', 'Helvetica Neue', sans-serif;
+            padding: 20px;
+        }
+
+        .game-layout {
+            display: flex;
+            align-items: stretch;
+            justify-content: center;
+            gap: 28px;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .control-panel {
+            width: 280px;
+            background: rgba(35, 35, 45, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 48px;
+            padding: 30px 20px;
+            color: #f0e9e0;
+            box-shadow: 0 20px 30px -8px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,215,140,0.2) inset;
+            border: 1px solid rgba(255, 215, 150, 0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            max-height: 90vh;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #c09a6b #3a2a2a;
+        }
+
+        .control-panel::-webkit-scrollbar {
+            width: 6px;
+        }
+        .control-panel::-webkit-scrollbar-thumb {
+            background: #c09a6b;
+            border-radius: 20px;
+        }
+
+        .board-wrapper {
+            background: transparent;
+            padding: 20px;
+            border-radius: 36px;
+            box-shadow: 0 25px 40px rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 auto;
+        }
+
+        .schulte-board {
+            display: grid;
+            gap: 10px;
+            padding: 20px;
+            background: #f0f0f0;
+            border-radius: 24px;
+            box-shadow: inset 0 0 0 2px #ccc, 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .schulte-cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fff;
+            border-radius: 12px;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 0 #ddd, 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .schulte-cell:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #ddd, 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .schulte-cell:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #ddd, 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .schulte-cell.correct {
+            background: #4caf50;
+            color: white;
+        }
+
+        .panel-title {
+            font-size: 34px;
+            font-weight: 700;
+            text-align: center;
+            background: linear-gradient(135deg, #fde6b6, #dba870);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 5px #00000050;
+        }
+
+        .group-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #eddabc;
+            margin: 8px 0 6px 6px;
+            letter-spacing: 1px;
+            border-left: 6px solid #e6b567;
+            padding-left: 12px;
+            text-transform: uppercase;
+        }
+
+        .button-row {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: #2f2f3a;
+            border: 2px solid #7e6b5a;
+            color: #f2e3cf;
+            font-size: 18px;
+            font-weight: 600;
+            padding: 14px 8px;
+            border-radius: 60px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            box-shadow: 0 6px 0 #1a1a22, 0 4px 12px black;
+            flex: 1 1 0px;
+            min-width: 100px;
+            backdrop-filter: blur(4px);
+            letter-spacing: 0.8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            text-decoration: none;
+        }
+
+        .btn.small {
+            font-size: 16px;
+            padding: 12px 6px;
+            min-width: 80px;
+        }
+
+        .btn.active {
+            background: #3c6e8f;
+            border-color: #ffcf9a;
+            box-shadow: 0 6px 0 #1d404b, 0 4px 12px black;
+            color: white;
+        }
+
+        .btn:hover {
+            background: #4a4a5a;
+            border-color: #dbb27c;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 0 #1a1a22, 0 8px 16px black;
+        }
+
+        .btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #1a1a22;
+        }
+
+        .difficulty-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin: 10px 0;
+        }
+
+        .difficulty-btn {
+            background: #2f2f3a;
+            border: 2px solid #7e6b5a;
+            color: #f2e3cf;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 8px 4px;
+            border-radius: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            box-shadow: 0 4px 0 #1a1a22, 0 2px 8px black;
+        }
+
+        .difficulty-btn.active {
+            background: #3c6e8f;
+            border-color: #ffcf9a;
+            box-shadow: 0 4px 0 #1d404b, 0 2px 8px black;
+            color: white;
+        }
+
+        .status-area {
+            font-size: 30px;
+            font-weight: 700;
+            text-align: center;
+            background: #2b2b38cc;
+            border-radius: 60px;
+            padding: 22px 8px;
+            margin: 10px 0 14px 0;
+            border: 2px solid #c9a468;
+            box-shadow: inset 0 2px 6px #00000060, 0 6px 0 #18181e;
+            color: #fff2d4;
+            backdrop-filter: blur(4px);
+        }
+
+        .timer-display {
+            font-size: 48px;
+            font-weight: bold;
+            text-align: center;
+            color: #ffd700;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            margin: 10px 0;
+        }
+
+        .color-picker-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .color-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            background: #2d2d3a;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .color-option:hover {
+            background: #4a4a5a;
+        }
+
+        .color-option.active {
+            background: #3c6e8f;
+            border: 2px solid #ffcf9a;
+        }
+
+        .color-swatch {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+        }
+
+        .info-section {
+            background: #2d2d3a;
+            border-radius: 36px;
+            padding: 20px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #f2e3cf;
+            border: 1px solid #b5976b;
+            margin-top: 20px;
+        }
+
+        .info-section h3 {
+            color: #fde6b6;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .info-section p {
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 1024px) {
+            .game-layout {
+                flex-wrap: wrap;
+            }
+            .control-panel {
+                width: 320px;
+                max-height: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .game-layout {
+                gap: 15px;
+            }
+            
+            .control-panel {
+                width: 100%;
+                max-width: 400px;
+                padding: 20px 15px;
+                border-radius: 32px;
+            }
+            
+            .panel-title {
+                font-size: 28px;
+            }
+            
+            .group-title {
+                font-size: 18px;
+            }
+            
+            .btn {
+                font-size: 16px;
+                padding: 12px 6px;
+            }
+            
+            .btn.small {
+                font-size: 14px;
+                padding: 10px 4px;
+            }
+            
+            .status-area {
+                font-size: 24px;
+                padding: 18px 6px;
+            }
+            
+            .timer-display {
+                font-size: 36px;
+            }
+            
+            .schulte-board {
+                padding: 15px;
+                gap: 8px;
+            }
+            
+            .schulte-cell {
+                font-size: 18px;
+                border-radius: 8px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .control-panel {
+                padding: 15px 10px;
+                border-radius: 24px;
+            }
+            
+            .panel-title {
+                font-size: 24px;
+            }
+            
+            .group-title {
+                font-size: 16px;
+            }
+            
+            .btn {
+                font-size: 14px;
+                padding: 10px 4px;
+            }
+            
+            .btn.small {
+                font-size: 12px;
+                padding: 8px 3px;
+            }
+            
+            .status-area {
+                font-size: 20px;
+                padding: 14px 4px;
+            }
+            
+            .timer-display {
+                font-size: 28px;
+            }
+            
+            .schulte-board {
+                padding: 10px;
+                gap: 6px;
+            }
+            
+            .schulte-cell {
+                font-size: 14px;
+                border-radius: 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-layout">
+        <!-- 左侧控制面板 -->
+        <div class="control-panel left-panel">
+            <div class="panel-title">舒尔特表</div>
+            
+            <div class="group-title">难度</div>
+            <div class="difficulty-buttons" id="difficultyButtons">
+                <button class="difficulty-btn" data-size="3">3×3</button>
+                <button class="difficulty-btn" data-size="4">4×4</button>
+                <button class="difficulty-btn" data-size="5">5×5</button>
+                <button class="difficulty-btn" data-size="6">6×6</button>
+                <button class="difficulty-btn" data-size="7">7×7</button>
+                <button class="difficulty-btn" data-size="8">8×8</button>
+                <button class="difficulty-btn active" data-size="9">9×9</button>
+            </div>
+            
+            <div class="group-title">颜色</div>
+            <div class="color-picker-container" id="colorPickerContainer">
+                <div class="color-option active" data-color="#4caf50">
+                    <div class="color-swatch" style="background-color: #4caf50;"></div>
+                    <span>绿色</span>
+                </div>
+                <div class="color-option" data-color="#2196f3">
+                    <div class="color-swatch" style="background-color: #2196f3;"></div>
+                    <span>蓝色</span>
+                </div>
+                <div class="color-option" data-color="#ff9800">
+                    <div class="color-swatch" style="background-color: #ff9800;"></div>
+                    <span>橙色</span>
+                </div>
+                <div class="color-option" data-color="#f44336">
+                    <div class="color-swatch" style="background-color: #f44336;"></div>
+                    <span>红色</span>
+                </div>
+            </div>
+            
+            <div class="status-area" id="statusText">准备开始</div>
+            
+            <div class="group-title">时间</div>
+            <div class="timer-display" id="timerDisplay">00.00</div>
+            
+            <div class="button-row">
+                <button class="btn" id="generateBtn">生成新表</button>
+                <button class="btn" id="resetBtn">重置</button>
+            </div>
+        </div>
+
+        <!-- 中央舒尔特表 -->
+        <div class="board-wrapper">
+            <div class="schulte-board" id="schulteBoard"></div>
+        </div>
+
+        <!-- 右侧信息面板 -->
+        <div class="control-panel right-panel">
+            <div class="panel-title">游戏信息</div>
+            
+            <div class="group-title">舒尔特表介绍</div>
+            <div class="info-section">
+                <h3>什么是舒尔特表？</h3>
+                <p>舒尔特表是一种用于训练注意力和视觉搜索能力的工具，由德国心理学家舒尔特发明。</p>
+                
+                <h3>如何使用？</h3>
+                <p>1. 选择合适的难度（3×3到9×9）</p>
+                <p>2. 点击「生成新表」按钮</p>
+                <p>3. 从1开始，按顺序点击所有数字</p>
+                <p>4. 完成后查看用时，挑战自己的极限</p>
+                
+                <h3>训练效果</h3>
+                <p>• 提高注意力集中度</p>
+                <p>• 增强视觉搜索能力</p>
+                <p>• 提升反应速度</p>
+                <p>• 改善手眼协调能力</p>
+            </div>
+            
+            <div class="group-title">作者链接</div>
+            <a href="https://www.52pojie.cn/" target="_blank" style="text-decoration: none;">
+                <div class="btn full-width"><span class="btn-icon">🔗</span> 作者链接</div>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // 游戏状态
+            let currentSize = 9;
+            let currentColor = '#4caf50';
+            let currentNumber = 1;
+            let startTime = null;
+            let timerInterval = null;
+            let isPlaying = false;
+            
+            // DOM 元素
+            const schulteBoard = document.getElementById('schulteBoard');
+            const timerDisplay = document.getElementById('timerDisplay');
+            const statusText = document.getElementById('statusText');
+            const generateBtn = document.getElementById('generateBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const difficultyButtons = document.getElementById('difficultyButtons');
+            const colorPickerContainer = document.getElementById('colorPickerContainer');
+            
+            // 生成舒尔特表
+            function generateSchulteTable() {
+                // 清空棋盘
+                schulteBoard.innerHTML = '';
+                
+                // 设置网格布局
+                schulteBoard.style.gridTemplateColumns = `repeat(${currentSize}, 1fr)`;
+                schulteBoard.style.gridTemplateRows = `repeat(${currentSize}, 1fr)`;
+                
+                // 生成数字数组并打乱
+                const numbers = [];
+                const total = currentSize * currentSize;
+                for (let i = 1; i <= total; i++) {
+                    numbers.push(i);
+                }
+                // 打乱数组
+                for (let i = numbers.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [numbers[i], numbers[j]] = [numbers[j], numbers[i]];
+                }
+                
+                // 创建单元格
+                numbers.forEach(num => {
+                    const cell = document.createElement('div');
+                    cell.className = 'schulte-cell';
+                    cell.textContent = num;
+                    cell.addEventListener('click', () => handleCellClick(num, cell));
+                    schulteBoard.appendChild(cell);
+                });
+                
+                // 重置游戏状态
+                currentNumber = 1;
+                statusText.textContent = '开始按顺序点击数字';
+                
+                // 开始计时
+                startTimer();
+            }
+            
+            // 处理单元格点击
+            function handleCellClick(num, cell) {
+                if (!isPlaying) return;
+                
+                if (num === currentNumber) {
+                    // 正确点击
+                    cell.classList.add('correct');
+                    currentNumber++;
+                    
+                    const total = currentSize * currentSize;
+                    if (currentNumber > total) {
+                        // 完成
+                        stopTimer();
+                        statusText.textContent = '完成！';
+                        isPlaying = false;
+                    }
+                }
+            }
+            
+            // 开始计时
+            function startTimer() {
+                // 清除之前的计时器
+                if (timerInterval) {
+                    clearInterval(timerInterval);
+                }
+                
+                startTime = Date.now();
+                isPlaying = true;
+                
+                timerInterval = setInterval(() => {
+                    const elapsed = (Date.now() - startTime) / 1000;
+                    timerDisplay.textContent = elapsed.toFixed(2);
+                }, 10);
+            }
+            
+            // 停止计时
+            function stopTimer() {
+                if (timerInterval) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                }
+            }
+            
+            // 重置游戏
+            function resetGame() {
+                stopTimer();
+                timerDisplay.textContent = '00.00';
+                statusText.textContent = '准备开始';
+                currentNumber = 1;
+                isPlaying = false;
+                schulteBoard.innerHTML = '';
+            }
+            
+            // 事件绑定
+            generateBtn.addEventListener('click', generateSchulteTable);
+            resetBtn.addEventListener('click', resetGame);
+            
+            // 难度选择
+            difficultyButtons.addEventListener('click', (e) => {
+                if (e.target.classList.contains('difficulty-btn')) {
+                    // 移除所有活动状态
+                    document.querySelectorAll('.difficulty-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    // 添加当前活动状态
+                    e.target.classList.add('active');
+                    // 更新难度
+                    currentSize = parseInt(e.target.dataset.size);
+                    // 生成新表
+                    generateSchulteTable();
+                }
+            });
+            
+            // 颜色选择
+            colorPickerContainer.addEventListener('click', (e) => {
+                if (e.target.closest('.color-option')) {
+                    const colorOption = e.target.closest('.color-option');
+                    // 移除所有活动状态
+                    document.querySelectorAll('.color-option').forEach(option => {
+                        option.classList.remove('active');
+                    });
+                    // 添加当前活动状态
+                    colorOption.classList.add('active');
+                    // 更新颜色
+                    currentColor = colorOption.dataset.color;
+                }
+            });
+            
+            // 初始化
+            generateSchulteTable();
+        })();
+    </script>
+</body>
+</html>
