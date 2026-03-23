@@ -229,9 +229,10 @@
             box-shadow: 0 2px 0 #1a1a22;
         }
 
-        .difficulty-buttons {
+        .difficulty-buttons,
+        .color-buttons {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 8px;
             margin: 10px 0;
         }
@@ -513,23 +514,11 @@
             </div>
             
             <div class="group-title">颜色</div>
-            <div class="color-picker-container" id="colorPickerContainer">
-                <div class="color-option active" data-color="#4caf50">
-                    <div class="color-swatch" style="background-color: #4caf50;"></div>
-                    <span>绿色</span>
-                </div>
-                <div class="color-option" data-color="#2196f3">
-                    <div class="color-swatch" style="background-color: #2196f3;"></div>
-                    <span>蓝色</span>
-                </div>
-                <div class="color-option" data-color="#ff9800">
-                    <div class="color-swatch" style="background-color: #ff9800;"></div>
-                    <span>橙色</span>
-                </div>
-                <div class="color-option" data-color="#f44336">
-                    <div class="color-swatch" style="background-color: #f44336;"></div>
-                    <span>红色</span>
-                </div>
+            <div class="color-buttons" id="colorPickerContainer">
+                <button class="difficulty-btn active" data-color="#4caf50" style="background-color: #4caf50; color: white;">绿色</button>
+                <button class="difficulty-btn" data-color="#2196f3" style="background-color: #2196f3; color: white;">蓝色</button>
+                <button class="difficulty-btn" data-color="#ff9800" style="background-color: #ff9800; color: white;">橙色</button>
+                <button class="difficulty-btn" data-color="#f44336" style="background-color: #f44336; color: white;">红色</button>
             </div>
             
             <div class="status-area" id="statusText">准备开始</div>
@@ -719,11 +708,11 @@
             
             // 颜色选择
             colorPickerContainer.addEventListener('click', (e) => {
-                if (e.target.closest('.color-option')) {
-                    const colorOption = e.target.closest('.color-option');
+                if (e.target.classList.contains('difficulty-btn')) {
+                    const colorOption = e.target;
                     // 移除所有活动状态
-                    document.querySelectorAll('.color-option').forEach(option => {
-                        option.classList.remove('active');
+                    document.querySelectorAll('#colorPickerContainer .difficulty-btn').forEach(btn => {
+                        btn.classList.remove('active');
                     });
                     // 添加当前活动状态
                     colorOption.classList.add('active');
