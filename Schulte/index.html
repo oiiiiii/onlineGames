@@ -527,7 +527,6 @@
             
             <div class="button-row">
                 <button class="btn" id="generateBtn">生成新表</button>
-                <button class="btn" id="startBtn">开始</button>
                 <button class="btn" id="resetBtn">重置</button>
             </div>
         </div>
@@ -623,10 +622,9 @@
                 
                 // 重置游戏状态
                 currentNumber = 1;
-                statusText.textContent = '点击开始按钮开始';
-                stopTimer();
-                timerDisplay.textContent = '00.00';
-                isPlaying = false;
+                statusText.textContent = '开始按顺序点击数字';
+                // 生成新表后自动开始计时
+                startTimer();
             }
             
             // 处理单元格点击
@@ -687,7 +685,6 @@
             
             // 事件绑定
             generateBtn.addEventListener('click', generateSchulteTable);
-            startBtn.addEventListener('click', startTimer);
             resetBtn.addEventListener('click', resetGame);
             
             // 难度选择
