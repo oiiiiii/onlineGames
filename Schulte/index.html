@@ -57,11 +57,29 @@
             border-radius: 36px;
             box-shadow: 0 25px 40px rgba(0, 0, 0, 0.5);
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             flex: 0 0 auto;
             width: 500px;
-            height: 500px;
+            height: 550px;
+        }
+
+        .timer-container {
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .timer-container .timer-display {
+            font-size: 36px;
+            font-weight: bold;
+            color: #ffd700;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            background: rgba(35, 35, 45, 0.85);
+            padding: 10px 30px;
+            border-radius: 60px;
+            border: 2px solid #c9a468;
+            box-shadow: 0 6px 0 #18181e, 0 4px 12px rgba(0,0,0,0.3);
         }
 
         .schulte-board {
@@ -437,8 +455,7 @@
             
             <div class="status-area" id="statusText">准备开始</div>
             
-            <div class="group-title">时间</div>
-            <div class="timer-display" id="timerDisplay">00.00</div>
+
             
             <div class="button-row">
                 <button class="btn" id="generateBtn">生成新表</button>
@@ -449,6 +466,9 @@
 
         <!-- 中央舒尔特表 -->
         <div class="board-wrapper">
+            <div class="timer-container">
+                <div class="timer-display" id="timerDisplay">00.00</div>
+            </div>
             <div class="schulte-board" id="schulteBoard"></div>
         </div>
 
