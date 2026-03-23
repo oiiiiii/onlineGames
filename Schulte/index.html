@@ -59,18 +59,38 @@
             align-items: center;
             justify-content: center;
             flex: 0 0 auto;
-            width: 500px;
-            height: 550px;
             border: 2px solid #c9a468;
             padding: 20px;
             box-sizing: border-box;
+        }
+
+        /* PC端适配 */
+        @media (min-width: 769px) {
+            .board-wrapper {
+                height: calc(100vh - 40px);
+                max-height: 800px;
+                width: calc(100vh - 40px);
+                max-width: 800px;
+                min-width: 500px;
+                min-height: 500px;
+            }
+        }
+
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            .board-wrapper {
+                width: 100vw;
+                max-width: 100%;
+                height: 100vw;
+                max-height: 100vh;
+            }
         }
 
         .game-container {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
             width: 100%;
             height: 100%;
             background: rgba(255, 255, 255, 0.1);
@@ -151,9 +171,6 @@
             background: #f0f0f0;
             border-radius: 24px;
             box-shadow: inset 0 0 0 2px #ccc, 0 10px 20px rgba(0,0,0,0.2);
-            width: 100%;
-            flex: 1;
-            aspect-ratio: 1;
             border: 2px solid #ccc;
             box-sizing: border-box;
         }
@@ -719,6 +736,9 @@
                 // 清空棋盘
                 schulteBoard.innerHTML = '';
                 
+                // 重新计算尺寸
+                calculateBoardSize();
+                
                 // 设置网格布局
                 schulteBoard.style.gridTemplateColumns = `repeat(${currentSize}, 1fr)`;
                 schulteBoard.style.gridTemplateRows = `repeat(${currentSize}, 1fr)`;
@@ -826,6 +846,8 @@
                     // 重置计时器
                     stopTimer();
                     timerDisplay.textContent = '00.00';
+                    // 重新计算尺寸
+                    calculateBoardSize();
                 }
             });
             
@@ -864,13 +886,50 @@
                 }
             });
             
+            // 计算和设置舒尔特表尺寸
+            function calculateBoardSize() {
+                const boardWrapper = document.querySelector('.board-wrapper');
+                const gameContainer = document.querySelector('.game-container');
+                const timerContainer = document.querySelector('.timer-container');
+                
+                // 获取board-wrapper的尺寸
+                const wrapperWidth = boardWrapper.clientWidth;
+                const wrapperHeight = boardWrapper.clientHeight;
+                
+                // 获取game-container的padding
+                const gameContainerStyle = window.getComputedStyle(gameContainer);
+                const gameContainerPaddingTop = parseFloat(gameContainerStyle.paddingTop);
+                const gameContainerPaddingBottom = parseFloat(gameContainerStyle.paddingBottom);
+                
+                // 获取timer-container的高度和margin
+                const timerStyle = window.getComputedStyle(timerContainer);
+                const timerHeight = timerContainer.clientHeight;
+                const timerMarginBottom = parseFloat(timerStyle.marginBottom);
+                
+                // 计算schulte-board的可用空间
+                const availableWidth = wrapperWidth - 40; // 20px padding on left and right of board-wrapper
+                const availableHeight = wrapperHeight - 40 - timerHeight - timerMarginBottom - gameContainerPaddingTop - gameContainerPaddingBottom;
+                
+                // 计算schulte-board的尺寸，确保为正方形
+                const boardSize = Math.min(availableWidth, availableHeight);
+                
+                // 设置schulte-board的尺寸
+                schulteBoard.style.width = `${boardSize}px`;
+                schulteBoard.style.height = `${boardSize}px`;
+            }
+            
             // 初始化
             function init() {
                 // 设置颜色按钮的初始背景颜色
                 colorBtn.style.backgroundColor = currentColor;
                 // 清空棋盘，保持白板状态
                 schulteBoard.innerHTML = '';
+                // 计算和设置舒尔特表尺寸
+                calculateBoardSize();
             }
+            
+            // 监听窗口大小变化
+            window.addEventListener('resize', calculateBoardSize);
             
             // 初始化
             init();
