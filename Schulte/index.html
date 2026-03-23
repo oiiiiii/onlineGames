@@ -83,11 +83,11 @@
 
         .timer-container {
             margin-bottom: 15px;
-            text-align: center;
             height: 50px;
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
+            width: 100%;
         }
 
         .timer-container .timer-display {
@@ -105,6 +105,43 @@
             display: flex;
             align-items: center;
             justify-content: center;
+        }
+
+        .timer-container .button-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .timer-container .icon-btn {
+            width: 40px;
+            height: 40px;
+            background: rgba(20, 20, 30, 0.9);
+            border: 2px solid #c9a468;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            box-shadow: 0 4px 0 #18181e, 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .timer-container .icon-btn:hover {
+            background: #4a4a5a;
+            border-color: #dbb27c;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #18181e, 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .timer-container .icon-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #18181e;
+        }
+
+        .timer-container .icon-btn img {
+            width: 24px;
+            height: 24px;
         }
 
         .schulte-board {
@@ -147,7 +184,6 @@
         }
 
         .schulte-cell.correct {
-            background: #4caf50;
             color: white;
         }
 
@@ -282,37 +318,35 @@
         }
 
         .color-picker-container {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
             margin: 10px 0;
         }
 
-        .color-option {
+        .color-controls {
             display: flex;
+            gap: 12px;
             align-items: center;
-            gap: 10px;
-            padding: 8px 12px;
-            background: #2d2d3a;
-            border-radius: 30px;
+        }
+
+        .color-btn-container {
+            flex: 1;
+            position: relative;
+        }
+
+        .color-input {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
             cursor: pointer;
-            transition: all 0.15s ease;
+            z-index: 2;
         }
 
-        .color-option:hover {
-            background: #4a4a5a;
-        }
-
-        .color-option.active {
-            background: #3c6e8f;
-            border: 2px solid #ffcf9a;
-        }
-
-        .color-swatch {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            border: 2px solid #fff;
+        .color-btn {
+            width: 100%;
+            height: 48px;
+            background: #4caf50;
+            color: white;
+            z-index: 1;
         }
 
         .info-section {
@@ -504,31 +538,31 @@
             
             <div class="group-title">难度</div>
             <div class="difficulty-buttons" id="difficultyButtons">
-                <button class="difficulty-btn" data-size="3">3×3</button>
+                <button class="difficulty-btn active" data-size="3">3×3</button>
                 <button class="difficulty-btn" data-size="4">4×4</button>
                 <button class="difficulty-btn" data-size="5">5×5</button>
                 <button class="difficulty-btn" data-size="6">6×6</button>
                 <button class="difficulty-btn" data-size="7">7×7</button>
                 <button class="difficulty-btn" data-size="8">8×8</button>
-                <button class="difficulty-btn active" data-size="9">9×9</button>
+                <button class="difficulty-btn" data-size="9">9×9</button>
             </div>
             
             <div class="group-title">颜色</div>
-            <div class="color-buttons" id="colorPickerContainer">
-                <button class="difficulty-btn active" data-color="#4caf50" style="background-color: #4caf50; color: white;">绿色</button>
-                <button class="difficulty-btn" data-color="#2196f3" style="background-color: #2196f3; color: white;">蓝色</button>
-                <button class="difficulty-btn" data-color="#ff9800" style="background-color: #ff9800; color: white;">橙色</button>
-                <button class="difficulty-btn" data-color="#f44336" style="background-color: #f44336; color: white;">红色</button>
+            <div class="color-picker-container">
+                <div class="color-controls">
+                    <button class="btn small" id="noColorBtn">不变色</button>
+                    <div class="color-btn-container">
+                        <input type="color" id="colorPicker" value="#4caf50" class="color-input">
+                        <button class="btn small color-btn" id="colorBtn">选择颜色</button>
+                    </div>
+                </div>
             </div>
-            
-            <div class="status-area" id="statusText">准备开始</div>
             
 
             
-            <div class="button-row">
-                <button class="btn" id="generateBtn">生成新表</button>
-                <button class="btn" id="resetBtn">重置</button>
-            </div>
+
+            
+
         </div>
 
         <!-- 中央舒尔特表 -->
@@ -536,6 +570,14 @@
             <div class="game-container">
                 <div class="timer-container">
                     <div class="timer-display" id="timerDisplay">00.00</div>
+                    <div class="button-group">
+                        <button class="icon-btn" id="generateBtn">
+                            <img src="./start.svg" alt="开始">
+                        </button>
+                        <button class="icon-btn" id="resetBtn">
+                            <img src="./restart.svg" alt="重置">
+                        </button>
+                    </div>
                 </div>
                 <div class="schulte-board" id="schulteBoard"></div>
             </div>
@@ -573,8 +615,9 @@
     <script>
         (function() {
             // 游戏状态
-            let currentSize = 9;
+            let currentSize = 3;
             let currentColor = '#4caf50';
+            let useColor = true;
             let currentNumber = 1;
             let startTime = null;
             let timerInterval = null;
@@ -583,12 +626,13 @@
             // DOM 元素
             const schulteBoard = document.getElementById('schulteBoard');
             const timerDisplay = document.getElementById('timerDisplay');
-            const statusText = document.getElementById('statusText');
             const generateBtn = document.getElementById('generateBtn');
             const startBtn = document.getElementById('startBtn');
             const resetBtn = document.getElementById('resetBtn');
             const difficultyButtons = document.getElementById('difficultyButtons');
-            const colorPickerContainer = document.getElementById('colorPickerContainer');
+            const colorPicker = document.getElementById('colorPicker');
+            const noColorBtn = document.getElementById('noColorBtn');
+            const colorBtn = document.getElementById('colorBtn');
             
             // 生成舒尔特表
             function generateSchulteTable() {
@@ -622,9 +666,6 @@
                 
                 // 重置游戏状态
                 currentNumber = 1;
-                statusText.textContent = '开始按顺序点击数字';
-                // 生成新表后自动开始计时
-                startTimer();
             }
             
             // 处理单元格点击
@@ -633,16 +674,17 @@
                 
                 if (num === currentNumber) {
                     // 正确点击
-                    cell.classList.add('correct');
-                    // 应用选择的颜色
-                    cell.style.backgroundColor = currentColor;
+                    // 应用选择的颜色（如果启用）
+                    if (useColor) {
+                        cell.classList.add('correct');
+                        cell.style.backgroundColor = currentColor;
+                    }
                     currentNumber++;
                     
                     const total = currentSize * currentSize;
                     if (currentNumber > total) {
                         // 完成
                         stopTimer();
-                        statusText.textContent = '完成！';
                         isPlaying = false;
                     }
                 }
@@ -657,7 +699,6 @@
                 
                 startTime = Date.now();
                 isPlaying = true;
-                statusText.textContent = '开始按顺序点击数字';
                 
                 timerInterval = setInterval(() => {
                     const elapsed = (Date.now() - startTime) / 1000;
@@ -677,14 +718,16 @@
             function resetGame() {
                 stopTimer();
                 timerDisplay.textContent = '00.00';
-                statusText.textContent = '准备开始';
                 currentNumber = 1;
                 isPlaying = false;
                 schulteBoard.innerHTML = '';
             }
             
             // 事件绑定
-            generateBtn.addEventListener('click', generateSchulteTable);
+            generateBtn.addEventListener('click', () => {
+                generateSchulteTable();
+                startTimer();
+            });
             resetBtn.addEventListener('click', resetGame);
             
             // 难度选择
@@ -698,28 +741,42 @@
                     e.target.classList.add('active');
                     // 更新难度
                     currentSize = parseInt(e.target.dataset.size);
-                    // 生成新表
-                    generateSchulteTable();
+                    // 清空棋盘，保持白板状态
+                    schulteBoard.innerHTML = '';
+                    // 重置计时器
+                    stopTimer();
+                    timerDisplay.textContent = '00.00';
                 }
             });
             
             // 颜色选择
-            colorPickerContainer.addEventListener('click', (e) => {
-                if (e.target.classList.contains('difficulty-btn')) {
-                    const colorOption = e.target;
-                    // 移除所有活动状态
-                    document.querySelectorAll('#colorPickerContainer .difficulty-btn').forEach(btn => {
-                        btn.classList.remove('active');
-                    });
-                    // 添加当前活动状态
-                    colorOption.classList.add('active');
-                    // 更新颜色
-                    currentColor = colorOption.dataset.color;
+            colorPicker.addEventListener('input', (e) => {
+                currentColor = e.target.value;
+                colorBtn.style.backgroundColor = currentColor;
+                useColor = true;
+                noColorBtn.classList.remove('active');
+            });
+            
+            // 不变色按钮
+            noColorBtn.addEventListener('click', () => {
+                useColor = !useColor;
+                if (useColor) {
+                    noColorBtn.classList.remove('active');
+                } else {
+                    noColorBtn.classList.add('active');
                 }
             });
             
             // 初始化
-            generateSchulteTable();
+            function init() {
+                // 设置颜色按钮的初始背景颜色
+                colorBtn.style.backgroundColor = currentColor;
+                // 清空棋盘，保持白板状态
+                schulteBoard.innerHTML = '';
+            }
+            
+            // 初始化
+            init();
         })();
     </script>
 </body>
