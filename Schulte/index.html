@@ -81,7 +81,6 @@
             .board-wrapper {
                 width: 100vw;
                 max-width: 100%;
-                height: 100vw;
                 max-height: 100vh;
             }
         }
@@ -892,9 +891,8 @@
                 const gameContainer = document.querySelector('.game-container');
                 const timerContainer = document.querySelector('.timer-container');
                 
-                // 获取board-wrapper的尺寸
-                const wrapperWidth = boardWrapper.clientWidth;
-                const wrapperHeight = boardWrapper.clientHeight;
+                // 检查是否为移动端
+                const isMobile = window.innerWidth <= 768;
                 
                 // 获取game-container的padding
                 const gameContainerStyle = window.getComputedStyle(gameContainer);
@@ -906,16 +904,38 @@
                 const timerHeight = timerContainer.clientHeight;
                 const timerMarginBottom = parseFloat(timerStyle.marginBottom);
                 
-                // 计算schulte-board的可用空间
-                const availableWidth = wrapperWidth - 40; // 20px padding on left and right of board-wrapper
-                const availableHeight = wrapperHeight - 40 - timerHeight - timerMarginBottom - gameContainerPaddingTop - gameContainerPaddingBottom;
-                
-                // 计算schulte-board的尺寸，确保为正方形
-                const boardSize = Math.min(availableWidth, availableHeight);
-                
-                // 设置schulte-board的尺寸
-                schulteBoard.style.width = `${boardSize}px`;
-                schulteBoard.style.height = `${boardSize}px`;
+                if (isMobile) {
+                    // 移动端适配：宽度设置为屏幕宽度
+                    const screenWidth = window.innerWidth;
+                    boardWrapper.style.width = `${screenWidth}px`;
+                    
+                    // 计算schulte-board的尺寸
+                    const boardSize = screenWidth - 40; // 20px padding on left and right of board-wrapper
+                    
+                    // 设置schulte-board的尺寸
+                    schulteBoard.style.width = `${boardSize}px`;
+                    schulteBoard.style.height = `${boardSize}px`;
+                    
+                    // 计算board-wrapper的高度，包含timer-container的高度
+                    const boardWrapperHeight = boardSize + 40 + timerHeight + timerMarginBottom + gameContainerPaddingTop + gameContainerPaddingBottom;
+                    boardWrapper.style.height = `${boardWrapperHeight}px`;
+                } else {
+                    // PC端适配
+                    // 获取board-wrapper的尺寸
+                    const wrapperWidth = boardWrapper.clientWidth;
+                    const wrapperHeight = boardWrapper.clientHeight;
+                    
+                    // 计算schulte-board的可用空间
+                    const availableWidth = wrapperWidth - 40; // 20px padding on left and right of board-wrapper
+                    const availableHeight = wrapperHeight - 40 - timerHeight - timerMarginBottom - gameContainerPaddingTop - gameContainerPaddingBottom;
+                    
+                    // 计算schulte-board的尺寸，确保为正方形
+                    const boardSize = Math.min(availableWidth, availableHeight);
+                    
+                    // 设置schulte-board的尺寸
+                    schulteBoard.style.width = `${boardSize}px`;
+                    schulteBoard.style.height = `${boardSize}px`;
+                }
             }
             
             // 初始化
