@@ -528,6 +528,79 @@
                 border-radius: 6px;
             }
         }
+        
+        /* 悬浮窗样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            background-color: rgba(35, 35, 45, 0.95);
+            margin: 15% auto;
+            padding: 20px;
+            border: 2px solid #c9a468;
+            border-radius: 36px;
+            width: 80%;
+            max-width: 600px;
+            box-shadow: 0 25px 40px rgba(0, 0, 0, 0.5);
+            color: #f2e3cf;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(201, 164, 104, 0.3);
+        }
+        
+        .modal-header h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #fde6b6;
+        }
+        
+        .close-btn {
+            color: #f2e3cf;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+        
+        .close-btn:hover,
+        .close-btn:focus {
+            color: #ffd700;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        .modal-body {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .modal-body h3 {
+            color: #fde6b6;
+            margin: 15px 0 10px 0;
+            font-size: 16px;
+        }
+        
+        .modal-body p {
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
@@ -558,11 +631,41 @@
                 </div>
             </div>
             
-
+            <div class="button-row">
+                <button class="btn" id="infoBtn">舒尔特表介绍</button>
+            </div>
             
-
-            
-
+            <div class="button-row">
+                <a href="https://www.52pojie.cn/" target="_blank" style="text-decoration: none; flex: 1;">
+                    <div class="btn">作者链接</div>
+                </a>
+            </div>
+        </div>
+        
+        <!-- 悬浮窗 -->
+        <div class="modal" id="infoModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>舒尔特表介绍</h2>
+                    <button class="close-btn" id="closeModal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <h3>什么是舒尔特表？</h3>
+                    <p>舒尔特表是一种用于训练注意力和视觉搜索能力的工具，由德国心理学家舒尔特发明。</p>
+                    
+                    <h3>如何使用？</h3>
+                    <p>1. 选择合适的难度（3×3到9×9）</p>
+                    <p>2. 点击「生成新表」按钮</p>
+                    <p>3. 从1开始，按顺序点击所有数字</p>
+                    <p>4. 完成后查看用时，挑战自己的极限</p>
+                    
+                    <h3>训练效果</h3>
+                    <p>• 提高注意力集中度</p>
+                    <p>• 增强视觉搜索能力</p>
+                    <p>• 提升反应速度</p>
+                    <p>• 改善手眼协调能力</p>
+                </div>
+            </div>
         </div>
 
         <!-- 中央舒尔特表 -->
@@ -583,33 +686,7 @@
             </div>
         </div>
 
-        <!-- 右侧信息面板 -->
-        <div class="control-panel right-panel">
-            <div class="panel-title">游戏信息</div>
-            
-            <div class="group-title">舒尔特表介绍</div>
-            <div class="info-section">
-                <h3>什么是舒尔特表？</h3>
-                <p>舒尔特表是一种用于训练注意力和视觉搜索能力的工具，由德国心理学家舒尔特发明。</p>
-                
-                <h3>如何使用？</h3>
-                <p>1. 选择合适的难度（3×3到9×9）</p>
-                <p>2. 点击「生成新表」按钮</p>
-                <p>3. 从1开始，按顺序点击所有数字</p>
-                <p>4. 完成后查看用时，挑战自己的极限</p>
-                
-                <h3>训练效果</h3>
-                <p>• 提高注意力集中度</p>
-                <p>• 增强视觉搜索能力</p>
-                <p>• 提升反应速度</p>
-                <p>• 改善手眼协调能力</p>
-            </div>
-            
-            <div class="group-title">作者链接</div>
-            <a href="https://www.52pojie.cn/" target="_blank" style="text-decoration: none;">
-                <div class="btn full-width"><span class="btn-icon">🔗</span> 作者链接</div>
-            </a>
-        </div>
+
     </div>
 
     <script>
@@ -633,6 +710,9 @@
             const colorPicker = document.getElementById('colorPicker');
             const noColorBtn = document.getElementById('noColorBtn');
             const colorBtn = document.getElementById('colorBtn');
+            const infoBtn = document.getElementById('infoBtn');
+            const infoModal = document.getElementById('infoModal');
+            const closeModal = document.getElementById('closeModal');
             
             // 生成舒尔特表
             function generateSchulteTable() {
@@ -764,6 +844,23 @@
                     noColorBtn.classList.remove('active');
                 } else {
                     noColorBtn.classList.add('active');
+                }
+            });
+            
+            // 舒尔特表介绍按钮
+            infoBtn.addEventListener('click', () => {
+                infoModal.style.display = 'block';
+            });
+            
+            // 关闭按钮
+            closeModal.addEventListener('click', () => {
+                infoModal.style.display = 'none';
+            });
+            
+            // 点击模态框外部关闭
+            window.addEventListener('click', (e) => {
+                if (e.target === infoModal) {
+                    infoModal.style.display = 'none';
                 }
             });
             
