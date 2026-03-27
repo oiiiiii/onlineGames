@@ -416,7 +416,7 @@
     // 保存当前状态到历史 (落子后调用)
     function pushHistory() {
         history.push({
-            board: copyBoard(board),
+            moveIndex: moveHistory.length - 1,  // 记录当前动作索引
             blackCaptures: blackCaptures,
             whiteCaptures: whiteCaptures,
             moveCount: moveCount,
@@ -427,16 +427,78 @@
     // 从历史恢复状态 (用于悔棋)
     function restoreFromHistory(index) {
         const state = history[index];
-        board = copyBoard(state.board);
+        
+        // 重置到初始状态
+        board = Array(BOARD_SIZE).fill().map(() => Array(BOARD_SIZE).fill(EMPTY));
+        blackCaptures = 0;
+        whiteCaptures = 0;
+        moveCount = 0;
+        currentPlayer = BLACK;
+        
+        // 重放动作序列到指定索引
+        const targetIndex = state.moveIndex;
+        for (let i = 0; i <= targetIndex; i++) {
+            const move = moveHistory[i];
+            if (move.pass) {
+                currentPlayer = (currentPlayer === BLACK) ? WHITE : BLACK;
+            } else {
+                const { color, row, col } = move;
+                const opponent = (color === BLACK) ? WHITE : BLACK;
+                
+                // 模拟落子逻辑
+                const newBoard = copyBoard(board);
+                newBoard[row][col] = color;
+                
+                const captured = removeDeadGroups(newBoard, opponent);
+                
+                if (color === BLACK) {
+                    blackCaptures += captured;
+                } else {
+                    whiteCaptures += captured;
+                }
+                
+                board = newBoard;
+                currentPlayer = opponent;
+                moveCount++;
+            }
+        }
+        
+        // 恢复劫检测状态
+        if (targetIndex >= 0) {
+            prevBoard = Array(BOARD_SIZE).fill().map(() => Array(BOARD_SIZE).fill(EMPTY));
+            // 重放前一个动作以获取 prevBoard
+            if (targetIndex > 0) {
+                // 重置到初始状态
+                const tempBoard = Array(BOARD_SIZE).fill().map(() => Array(BOARD_SIZE).fill(EMPTY));
+                let tempPlayer = BLACK;
+                
+                for (let i = 0; i < targetIndex; i++) {
+                    const move = moveHistory[i];
+                    if (move.pass) {
+                        tempPlayer = (tempPlayer === BLACK) ? WHITE : BLACK;
+                    } else {
+                        const { color, row, col } = move;
+                        const opponent = (color === BLACK) ? WHITE : BLACK;
+                        
+                        tempBoard[row][col] = color;
+                        removeDeadGroups(tempBoard, opponent);
+                        tempPlayer = opponent;
+                    }
+                }
+                prevBoard = copyBoard(tempBoard);
+            } else {
+                prevBoard = Array(BOARD_SIZE).fill().map(() => Array(BOARD_SIZE).fill(EMPTY));
+            }
+        } else {
+            prevBoard = Array(BOARD_SIZE).fill().map(() => Array(BOARD_SIZE).fill(EMPTY));
+        }
+        
+        // 恢复统计信息
         blackCaptures = state.blackCaptures;
         whiteCaptures = state.whiteCaptures;
         moveCount = state.moveCount;
         currentPlayer = state.currentPlayer;
-        if (index > 0) {
-            prevBoard = copyBoard(history[index-1].board);
-        } else {
-            prevBoard = Array(BOARD_SIZE).fill().map(() => Array(BOARD_SIZE).fill(EMPTY));
-        }
+        
         gameOver = false;
         stopTimer();
         startTimer(currentPlayer);
